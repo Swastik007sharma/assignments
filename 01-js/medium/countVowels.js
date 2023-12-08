@@ -4,9 +4,24 @@
 
   Once you've implemented the logic, test your code by running
 */
-
+// str = 'Hello, world!'
 function countVowels(str) {
-    // Your code here
+  let count = 0
+  vowels = ['a', 'e', 'i', 'o', 'u']
+  str = str.toLowerCase()
+  str = Array.from(str)
+  // console.log(str)
+
+  str = str.filter(char => /[aeiou]/i.test(char))
+  // console.log(str)
+  for (let i = 0; i < str.length; i++) {
+    if(vowels.includes(str[i])){
+      count++
+    }
+  }
+  return count
 }
+
+// countVowels(str)
 
 module.exports = countVowels;

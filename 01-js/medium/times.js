@@ -9,5 +9,34 @@ There is no automated test for this one, this is more for you to understand time
 */
 
 function calculateTime(n) {
-    return 0.01;
+    // const date = new Date();
+    // const secondsBeforeSum = date.getMilliseconds();
+    // console.log(secondsBeforeSum);
+    // let sum = 0;
+    // for (let i = 1; i <= n; i++) {
+    //     sum = sum + i
+    // }
+    // const secondsAfterSum = date.getMilliseconds();
+    // result = (secondsAfterSum-secondsBeforeSum)/1000
+    // return result
+
+    const startTime = new Date().getTime();
+    console.log(startTime);
+
+    let sum = 0;
+    for (let i = 1; i <= n; i++) {
+        sum += i;
+    }
+
+    const endTime = new Date().getTime();
+    console.log(endTime);
+
+    const elapsedTimeInMilliseconds = endTime - startTime;
+    const elapsedTimeInSeconds = elapsedTimeInMilliseconds / 1000; // convert milliseconds to seconds
+
+    return elapsedTimeInSeconds;
 }
+
+console.log(calculateTime(100))
+console.log(calculateTime(100000))
+console.log(calculateTime(10000000))
