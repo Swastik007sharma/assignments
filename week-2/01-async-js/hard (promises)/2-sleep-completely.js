@@ -5,6 +5,10 @@
  */
 
 function sleep(milliseconds) {
+    let p1 = new Promise((resolve, reject) => {
+        setTimeout(resolve,milliseconds)
+    })
+    return p1
 }
 
 module.exports = sleep;

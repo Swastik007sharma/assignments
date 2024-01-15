@@ -43,7 +43,62 @@
   const bodyParser = require('body-parser');
   
   const app = express();
-  
+
+  app.use(bodyParser.json())
+
+  const todos = []
+
+  app.get("/todos", (res,req) =>{
+    res.json(todos)
+  })
+
+  app.get("/todos:id", (res, req)=>{
+    const todo = todos.find(t => t.id === res.params.id)
+
+    if(!todo){
+      res.status(404).send
+    }else{
+      res.json(todo)
+    }
+  })
+
+  app.post("/todos", (res,req) => {
+    const newTodo = {
+      id :  Math.floor(Math.random()*100000),
+      title: res.body.title,
+      description: res.body.description
+    }
+    todos.push(newTodo)
+    res.status(201).json(newTodo)
+  })
+
+  app.put("/todos/:id", (res,req) => {
+    const todoIndex = todos.findIndex(t => t.id === parseInt(res.params.id))
+
+    if(todoIndex === -1){
+      res.status(404).send()
+    }else{
+      todos[todoIndex].title = res.body.title
+      todos[todoIndex].description = res.body.description
+      res.json(todos[todoIndex])
+    }
+  })
+
+  app.delete("/todos/:id", (res,req) => {
+    const todoIndex = todos.findIndex(t => t.id === parseInt(res.params.id))
+    if(todoIndex === -1){
+      res.status(404).send()
+    }else{
+      todos.splice(todoIndex, 1)
+      res.status(200).send()
+    }
+  })
+
+  app.get('*', (res,req) =>{
+    res.status(404).send("Route not defined")
+  })
   app.use(bodyParser.json());
+
+  app.listen(3000)
   
   module.exports = app;
