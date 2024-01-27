@@ -1,5 +1,3 @@
-const request = require('supertest');
-const assert = require('assert');
 const express = require('express');
 const app = express();
 // You have been given an express server which has a few endpoints.
@@ -15,6 +13,20 @@ let numberOfRequestsForUser = {};
 setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
+
+app.use((req, res, next) => {
+  const userId = req.headers.userId
+  if(numberOfRequestsForUser[userId]){
+    numberOfRequestsForUser[userId] += 1;
+    if(numberOfRequestsForUser[userId] > 5){
+      res.status(404).send({})
+    }
+  }
+  else{
+    numberOfRequestsForUser[userId] = 1
+  }
+  next()
+})
 
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
