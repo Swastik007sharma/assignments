@@ -34,57 +34,20 @@ function verifyJwt(token){
 }
 
 // Admin Routes
-app.post('/admin/signup', (req, res) => {
-    const username = req.body.username
-    const password = req.body.password
-
-    if(Admin.find(username)){
-        res.json({
-            msg: "user already exist"
-        })
-    }else{
-        Admin.create({
-            username: username,
-            password: password
-        })
-        res.json({
-            msg: "User created successfully"
-        })
-    }
+app.post('/signup', (req, res) => {
+    // Implement admin signup logic
 });
 
-app.post('/admin/signin', (req, res) => {
-    const username = req.body.username
-    const password = req.body.password
-
-    const token = createJwt(username, password)
-
-    localStorage.setItem("token",token)
+app.post('/signin', (req, res) => {
+    // Implement admin signup logic
 });
 
-app.post('/admin/courses', adminMiddleware, (req, res) => {
-    const token = req.headers.authorization
-    if(verifyJwt(token)){
-
-    }
-
-    Course.create({
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price,
-        image: req.body.image
-    })
-    res.json({
-        msg: "Course created successfully"
-    })
+app.post('/courses', adminMiddleware, (req, res) => {
+    // Implement course creation logic
 });
 
-app.get('/admin/courses', adminMiddleware, (req, res) => {
-    Course.find().then(courses => {
-        res.json({
-            courses
-        })
-    })
+app.get('/courses', adminMiddleware, (req, res) => {
+    // Implement fetching all courses logic
 });
 
 module.exports = router;
