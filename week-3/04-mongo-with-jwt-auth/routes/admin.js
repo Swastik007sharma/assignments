@@ -1,53 +1,66 @@
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
 const router = Router();
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const zod = require("zod");
-const jwtPassword = "123456789"
-
-const app = express()
-
-app.use(bodyParse.json())
-
-const emailSchema = zod().string().email()
-const passwordSchema = zod().string().min(8)
-
-function createJwt(username, password){
-    const userResponse = emailSchema.safeParse(username);
-    const passwordResponse = passwordSchema.safeParse(password);
-
-    if(!userResponse || !passwordResponse){
-        return null
-    }
-    const token = jwt.sign({username,password}, jwtPassword)
-    return token
-}
-
-function verifyJwt(token){
-    try{
-        const verification = jwt.verify(token, jwtPassword)
-        return verification
-    }catch(err){
-        return null
-    }
-}
+const { Admin, Course } = require("../db");
+const { createJwt}= require("../jwt_config");
 
 // Admin Routes
-app.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
     // Implement admin signup logic
+    const username = req.body.username
+    const password = req.body.password
+    await Admin.create({
+        username: username,
+        password: password
+    })
+    res.json({
+        message: "Admin created successfully"
+    })
 });
 
-app.post('/signin', (req, res) => {
+router.post('/signin', async (req, res) => {
     // Implement admin signup logic
+    const username = req.body.username
+    const password = req.body.password
+
+    const user = await Admin.find({
+        username: username,
+        password: password
+    })
+    if (user) {
+        const token = createJwt(username, password)
+        res.json({
+            token: token
+        })
+    } else {
+        res.status(411).json({
+            message: "Incorrect email and password"
+        })
+    }
+
 });
 
-app.post('/courses', adminMiddleware, (req, res) => {
+router.post('/courses', adminMiddleware, async (req, res) => {
     // Implement course creation logic
+    const response = await Course.create({
+        title: req.body.title,
+        description: req.body.description,
+        price: req.body.price,
+        image: req.body.image
+    })
+    res.json({
+        message: 'Course created successfully',
+        courseId: response._id
+    })
 });
 
-app.get('/courses', adminMiddleware, (req, res) => {
+router.get('/courses', adminMiddleware, async (req, res) => {
     // Implement fetching all courses logic
+    const response = await Course.find({})
+
+    res.json({
+        courses: response
+    })
 });
 
 module.exports = router;

@@ -1,61 +1,100 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<script>
+			let globalId = 1;
+			let todoState = [];
+			let oldTodoState = [];
 
-<head>
-  <script>
-    let globalId = 1;
-    let todoState = [];
-    let oldTodoState = [];
+			function addTodoToDom() {
+				const todos = document.getElementById("todos");
+				todos.innerHTML = "";
+				todoState.forEach((element) => {
+					todos.appendChild(
+						child(element.title, element.description, element.id)
+					);
+				});
+			}
 
-    function addTodoToDom() {
-      
-    }
+			function removeTodoFromDom(id) {
+				const index = todoState.findIndex((todo) => todo.id === id);
+				if (index !== -1) {
+					todoState.splice(index, 1);
+					addTodoToDom();
+				}
+			}
 
-    function removeTodoFromDom(todo) {
-      
-    }
+			function markAsDone(id) {
+				const todo = todoState.find((todo) => todo.id === id);
+				const button = document.getElementById(id).childNodes[2];
 
-    function updateTodoInDom(oldTodo, newTodo) {
-        
-    }
+				if (todo.status === true) {
+					button.innerHTML = "Mark As Done";
+					todo.status = false;
+				} else {
+					button.innerHTML = "Done!";
+					todo.status = true;
+				}
+			}
 
-    function updateState(newTodos) {
-      // calculate the diff b/w newTodos and oldTodos.
-      // More specifically, find out what todos are - 
-      // 1. added
-      // 2. deleted
-      // 3. updated
-      const added = [];
-      const deleted = [];
-      const updated = [];
-      // calculate these 3 arrays
-      // call addTodo, removeTodo, updateTodo functions on each of the
-      // elements
-      oldTodoState = newTodos;
-    }
+			function child(title, description, id, status) {
+				const child = document.createElement("div");
+				child.setAttribute("id", `${id}`);
+				const firstGrandChild = document.createElement("div");
+				firstGrandChild.innerHTML = title;
+				const secondGrandChild = document.createElement("div");
+				secondGrandChild.innerHTML = description;
+				const thirdGrandChild = document.createElement("button");
+				thirdGrandChild.innerHTML = "Mark As Done";
+				thirdGrandChild.setAttribute("onclick", `markAsDone(${id})`);
+				const fourthGrandChild = document.createElement("button");
+				fourthGrandChild.innerHTML = "Delete";
+				fourthGrandChild.setAttribute("onclick", `removeTodoFromDom(${id})`);
+				child.appendChild(firstGrandChild);
+				child.appendChild(secondGrandChild);
+				child.appendChild(thirdGrandChild);
+				child.appendChild(fourthGrandChild);
 
-    function addTodo() {
-      const title = document.getElementById("title").value;
-      const description = document.getElementById("description").value;
-      todoState.push({
-        title: title,
-        description: description,
-        id: globalId++,
-      })
-      updateState(todoState);
-    }
-  </script>
-</head>
+				return child;
+			}
 
-<body>
-  <input type="text" id="title" placeholder="Todo title"></input> <br /><br />
-  <input type="text" id="description" placeholder="Todo description"></input> <br /><br />
-  <button onclick="addTodo()">Add todo</button>
-  <br /> <br />
+			function updateState(newTodos) {
+				// calculate the diff b/w newTodos and oldTodos.
+				// More specifically, find out what todos are -
+				// 1. added
+				// 2. deleted
+				// 3. updated
+				const added = [];
+				const deleted = [];
+				const updated = [];
+				// calculate these 3 arrays
+				// call addTodo, removeTodo, updateTodo functions on each of the
+				// elements
+				oldTodoState = newTodos;
+			}
 
-  <div id="todos">
+			function addTodo() {
+				const title = document.getElementById("title").value;
+				const description = document.getElementById("description").value;
+				todoState.push({
+					title: title,
+					description: description,
+					id: globalId++,
+					status: false,
+				});
+				addTodoToDom(todoState);
+			}
+		</script>
+	</head>
 
-  </div>
-</body>
+	<body>
+		<input type="text" id="title" placeholder="Todo title" /><br /><br />
+		<input type="text" id="description" placeholder="Todo description" />
+		<br /><br />
+		<button onclick="addTodo()">Add todo</button>
+		<br />
+		<br />
 
+		<div id="todos"></div>
+	</body>
 </html>
